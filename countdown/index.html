@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>MoN Takanawa: The Museum of Narratives - </title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+</head>
+
+<body>
+    <script>
+        let targetDate;
+        let bubbles = [];
+        const themeColors = [
+            [255, 0, 0],     // #FF0000 
+            [106, 208, 116], // #6AD074 
+            [0, 28, 176]     // #001CB0 
+        ];
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            targetDate = new Date(2026, 2, 27, 0, 0, 0);
+
+            const now = new Date();
+            const diffMs = targetDate - now;
+            const dayMs = 1000 * 60 * 60 * 24;
+            let daysLeft = Math.ceil(diffMs / dayMs);
+            if (daysLeft < 0) daysLeft = 0;
+
+            // 
+            for (let i = 0; i < daysLeft; i++) {
+                let colorChoice;
+                const rand = random(1);
+                if (rand < 0.85) {
+                    // 85%
+                    colorChoice = random(themeColors);
+                } else {
+                    // 15%
+                    const gray = random(100, 180);
+                    colorChoice = [gray, gray, gray];
+                }
+
+                bubbles.push({
+                    x: random(width),
+                    y: random(height),
+                    r: random(20, 200),
+                    vx: random(-0.3, 0.3),
+                    vy: random(-0.3, 0.3),
+                    alpha: random(100, 250),
+                    color: colorChoice
+                });
+            }
+            textAlign(CENTER, CENTER);
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        function drawBackground() {
+            noStroke();
+            for (let b of bubbles) {
+                fill(b.color[0], b.color[1], b.color[2], b.alpha);
+                ellipse(b.x, b.y, b.r, b.r);
+                b.x += b.vx;
+                b.y += b.vy;
+                if (b.x < -b.r) b.x = width + b.r;
+                if (b.x > width + b.r) b.x = -b.r;
+                if (b.y < -b.r) b.y = height + b.r;
+                if (b.y > height + b.r) b.y = -b.r;
+            }
+        }
+
+        function draw() {
+            background(0);
+            drawBackground();
+
+            const now = new Date();
+            const diffMs = targetDate - now;
+            const dayMs = 1000 * 60 * 60 * 24;
+            let daysLeft = Math.ceil(diffMs / dayMs);
+            if (daysLeft < 0) daysLeft = 0;
+            const weeksLeft = (daysLeft / 7).toFixed(1);
+
+            // 
+            const h = String(now.getHours()).padStart(2, "0");
+            const m = String(now.getMinutes()).padStart(2, "0");
+            const s = String(now.getSeconds()).padStart(2, "0");
+
+            // 
+            const yyyy = now.getFullYear();
+            const MM = String(now.getMonth() + 1).padStart(2, "0");
+            const dd = String(now.getDate()).padStart(2, "0");
+
+            const baseSize = min(width, height);
+            const cx = width / 2;
+
+            // 
+            fill(0, 140);
+            rect(0, 0, width, height);
+
+            // 
+            noStroke();
+            fill(255);
+            textSize(baseSize * 0.08);
+            text(`${h}:${m}:${s}`, cx, baseSize * 0.16);
+
+            // 
+            textSize(baseSize * 0.05);
+            text(`${yyyy}/${MM}/${dd}`, cx, baseSize * 0.24);
+
+            // 
+            textSize(baseSize * 0.05);
+            text("MoN Takanawa:", cx, height / 2 - baseSize * 0.18);
+            text("The Museum of Narratives", cx, height / 2 - baseSize * 0.12);
+            text("開館まで", cx, height / 2 - baseSize * 0.04);
+            // text("Opening in", cx, height / 2 - baseSize * 0.04);
+
+            // 
+            textSize(baseSize * 0.22);
+            text(`${daysLeft}`, cx, height / 2 + baseSize * 0.12);
+
+            // 
+            textSize(baseSize * 0.08);
+            text(`日`, cx+150, height / 2 + baseSize * 0.12);
+            // text(`days`, cx+150, height / 2 + baseSize * 0.12);
+            
+            // 
+            textSize(baseSize * 0.12);
+            text(`${weeksLeft}`, cx, height / 2 + baseSize * 0.30);
+
+            // 
+            textSize(baseSize * 0.06);
+            text(`週`, cx+150, height / 2 + baseSize * 0.30);
+            // text(`weeks`, cx+150, height / 2 + baseSize * 0.30);
+        }
+    </script>
+</body>
+
+</html>

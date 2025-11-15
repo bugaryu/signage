@@ -1,0 +1,1 @@
+chromium --app="file:///home/montech/workspace/signage/countdown/index.html"
