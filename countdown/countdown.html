@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>MoN Takanawa: The Museum of Narratives - </title>
+    <title>MoN Takanawa: The Museum of Narratives - Countdown</title>
     <style>
         body {
             margin: 0;
@@ -21,6 +21,13 @@
 
 <body>
     <script>
+        // テスト用設定：表示時間（分数）
+        // 例：displayMinutes = 1 なら1分間表示
+        const displayMinutes = 60;
+        
+        let startDisplayTime = null;
+        let lastRedirectTime = null;
+
         let targetDate;
         let bubbles = [];
         const themeColors = [
@@ -107,6 +114,21 @@
             const baseSize = min(width, height);
             const cx = width / 2;
 
+            // 初回訪問時に現在時刻を記録
+            if (startDisplayTime === null) {
+                startDisplayTime = now.getTime();
+            }
+
+            // displayMinutes分経ったらtime.htmlにリダイレクト
+            const elapsedSeconds = (now.getTime() - startDisplayTime) / 1000;
+            const totalSeconds = displayMinutes * 60;
+
+            if (elapsedSeconds >= totalSeconds && lastRedirectTime === null) {
+                lastRedirectTime = now.getTime();
+                window.location.href = 'time.html';
+                return;
+            }
+
             // 
             fill(0, 140);
             rect(0, 0, width, height);
@@ -134,16 +156,16 @@
 
             // 
             textSize(baseSize * 0.08);
-            text(`日`, cx+150, height / 2 + baseSize * 0.12);
+            text(`日`, cx + 150, height / 2 + baseSize * 0.12);
             // text(`days`, cx+150, height / 2 + baseSize * 0.12);
-            
+
             // 
             textSize(baseSize * 0.12);
             text(`${weeksLeft}`, cx, height / 2 + baseSize * 0.30);
 
             // 
             textSize(baseSize * 0.06);
-            text(`週`, cx+150, height / 2 + baseSize * 0.30);
+            text(`週`, cx + 150, height / 2 + baseSize * 0.30);
             // text(`weeks`, cx+150, height / 2 + baseSize * 0.30);
         }
     </script>

@@ -1,1 +1,1 @@
-chromium --app="file:///home/montech/workspace/signage/countdown/index.html"
+chromium --app="file:///home/montech/workspace/signage/countdown/time.html"
