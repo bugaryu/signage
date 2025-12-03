@@ -9,7 +9,8 @@
             margin: 0;
             overflow: hidden;
             background: #000;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif;
+            /* font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif; */
+            /* font-family: "Noto Sans JP", sans-serif; */
         }
 
         canvas {
@@ -33,6 +34,9 @@
         function setup() {
             createCanvas(windowWidth, windowHeight);
             targetDate = new Date(2026, 2, 27, 0, 0, 0);
+
+            // drawingContext.shadowBlur = 0;
+            // drawingContext.shadowColor = 'black';
 
             const now = new Date();
             const diffMs = targetDate - now;
@@ -85,6 +89,9 @@
         }
 
         function draw() {
+            drawingContext.shadowBlur = 0;
+            drawingContext.shadowColor = 'black';
+
             background(0);
             drawBackground();
 
@@ -95,50 +102,36 @@
             if (daysLeft < 0) daysLeft = 0;
             const weeksLeft = (daysLeft / 7).toFixed(1);
 
-            // 
-            const h = String(now.getHours()).padStart(2, "0");
-            const m = String(now.getMinutes()).padStart(2, "0");
-            const s = String(now.getSeconds()).padStart(2, "0");
-
-            // 
-            const yyyy = now.getFullYear();
-            const MM = String(now.getMonth() + 1).padStart(2, "0");
-            const dd = String(now.getDate()).padStart(2, "0");
-            
-            // 曜日を英語短縮形で取得
-            const dayNames = ["Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."];
-            const dayName = dayNames[now.getDay()];
-
             const baseSize = min(width, height);
             const cx = width / 2;
 
+            // 背景を半透明で上書きして残像効果
             fill(0, 140);
             rect(0, 0, width, height);
 
-            noStroke();
-            fill(255);
-            textSize(baseSize * 0.08);
-            text(`${h}:${m}:${s}`, cx, baseSize * 0.16);
+            // noStroke();
+            fill(230);
+
+            // drawingContext.shadowOffsetX = 0;
+            // drawingContext.shadowOffsetY = 0;
+            drawingContext.shadowBlur = 50;
+            drawingContext.shadowColor = 'black';
+
 
             textSize(baseSize * 0.05);
-            text(`${yyyy}/${MM}/${dd} ${dayName}`, cx, baseSize * 0.24);
+            text("MoN Takanawa:", cx, baseSize * 0.15);
+            text("The Museum of Narratives", cx, baseSize * 0.22);
+            text("開館まで", cx, baseSize * 0.30);
 
-            textSize(baseSize * 0.05);
-            text("MoN Takanawa:", cx, height / 2 - baseSize * 0.35);
-            text("The Museum of Narratives", cx, height / 2 - baseSize * 0.29);
-            text("開館まで", cx, height / 2 - baseSize * 0.20);
-
-            textSize(baseSize * 0.22);
-            text(`${daysLeft}`, cx, height / 2);
-
-            textSize(baseSize * 0.08);
-            text(`days`, cx + baseSize * 0.30, height / 2);
-            
             textSize(baseSize * 0.12);
-            text(`${weeksLeft}`, cx, height / 2 + baseSize * 0.20);
+            text(`${daysLeft}`, cx, baseSize * 0.45);
+
+            textSize(baseSize * 0.08);
+            text(`${weeksLeft}`, cx, baseSize * 0.58);
 
             textSize(baseSize * 0.06);
-            text(`weeks`, cx + baseSize * 0.30, height / 2 + baseSize * 0.20);
+            text(`days`, cx + baseSize * 0.25, baseSize * 0.45);
+            text(`weeks`, cx + baseSize * 0.27, baseSize * 0.58);
         }
     </script>
 </body>

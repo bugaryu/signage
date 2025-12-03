@@ -3,10 +3,11 @@ let todayQuote = null;
 let quoteAlpha = 0; // 名言の透明度
 let fadingIn = true; // フェードイン中か
 let lastQuoteTime = 0; // 最後に名言が表示された時刻
-const quoteDisplayDuration = 3000; // 表示時間（ミリ秒）：10秒
-const fadeDuration = 1000; // フェードイン/アウト時間（ミリ秒）
+const quoteDisplayDuration = 10000; // 表示時間（ミリ秒）：10秒
+const fadeDuration = quoteDisplayDuration; // フェードイン/アウト時間（ミリ秒）
 
-const DEBUG = true; // デバッグモードフラグ
+const DEBUG = new URLSearchParams(window.parent.location.search).has('debug');
+console.log('Debug mode:', DEBUG);
 
 function pickTodayQuote() {
   // quotesDataは外部ファイル(quotes.js)から読み込まれる
@@ -99,7 +100,7 @@ function draw() {
     const padding = 40;
     const quoteBoxY = height * 0.60;
     const boxWidth = width - padding * 2;
-    const boxHeight = height * 0.2;
+    const boxHeight = height * 0.15;
 
     if (DEBUG && frameCount === 1) {
       console.log('[Draw] Quote rendering info:', {

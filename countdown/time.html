@@ -28,64 +28,12 @@
             height: 100%;
             z-index: 0;
         }
-
-        #ui-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .time {
-            font-size: 15vw;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-        }
-
-        .date {
-            font-size: 4vw;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-        }
     </style>
 </head>
 
 <body>
     <div id="p5-container"></div>
-    <div id="ui-overlay">
-        <div class="time" id="time">00:00:00</div>
-        <div class="date" id="date">0000/00/00</div>
-    </div>
-
     <script>
-        function updateTime() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, "0");
-            const m = String(now.getMinutes()).padStart(2, "0");
-            const s = String(now.getSeconds()).padStart(2, "0");
-
-            const yyyy = now.getFullYear();
-            const MM = String(now.getMonth() + 1).padStart(2, "0");
-            const dd = String(now.getDate()).padStart(2, "0");
-            
-            // 曜日を英語短縮形で取得
-            const dayNames = ["Sun.", "Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat."];
-            const dayName = dayNames[now.getDay()];
-
-            document.getElementById('time').textContent = `${h}:${m}:${s}`;
-            document.getElementById('date').textContent = `${yyyy}/${MM}/${dd} ${dayName}`;
-        }
-
-        updateTime();
-        setInterval(updateTime, 1000);
-
         // p5.js sketch for floating circle
         let sketch = (p) => {
             let circleX, circleY;
@@ -95,7 +43,7 @@
             let time = 0;
             let baseSize; // 解像度に対する比率で定義
 
-            p.setup = function() {
+            p.setup = function () {
                 let container = document.getElementById('p5-container');
                 let w = container.clientWidth;
                 let h = container.clientHeight;
@@ -111,7 +59,7 @@
                 targetSize = baseSize;
             };
 
-            p.draw = function() {
+            p.draw = function () {
                 p.background(0, 0, 0);
                 time += 0.01;
 
@@ -147,7 +95,7 @@
                 }
             };
 
-            p.windowResized = function() {
+            p.windowResized = function () {
                 if (document.getElementById('p5-container')) {
                     let container = document.getElementById('p5-container');
                     p.resizeCanvas(container.clientWidth, container.clientHeight);
@@ -157,8 +105,6 @@
 
         new p5(sketch);
     </script>
-    <!-- <script src="quotes.js"></script> -->
-    <!-- <script src="time_sketch.js"></script> -->
 </body>
 
 </html>
