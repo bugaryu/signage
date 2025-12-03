@@ -34,77 +34,34 @@
 <body>
     <div id="p5-container"></div>
     <script>
-        // p5.js sketch for floating circle
-        let sketch = (p) => {
-            let circleX, circleY;
-            let targetX, targetY;
-            let circleSize;
-            let targetSize;
-            let time = 0;
-            let baseSize; // 解像度に対する比率で定義
+        // p5.js グローバルモードでのセットアップ
+        function setup() {
+            let container = document.getElementById('p5-container');
+            let w = container.clientWidth;
+            let h = container.clientHeight;
+            createCanvas(w, h);
 
-            p.setup = function () {
+            // フローティングサークルの初期化
+            initFloatingCircle();
+        }
+
+        function draw() {
+            background(0, 0, 0);
+
+            // フローティングサークルの更新と描画
+            updateFloatingCircle();
+            drawFloatingCircle();
+        }
+
+        function windowResized() {
+            if (document.getElementById('p5-container')) {
                 let container = document.getElementById('p5-container');
-                let w = container.clientWidth;
-                let h = container.clientHeight;
-                let canvas = p.createCanvas(w, h);
-                canvas.parent('p5-container');
-
-                baseSize = Math.min(w, h) * 0.3; // 短辺の30%を基本サイズに
-                circleX = w / 2;
-                circleY = h / 2;
-                targetX = w / 2;
-                targetY = h / 2;
-                circleSize = baseSize;
-                targetSize = baseSize;
-            };
-
-            p.draw = function () {
-                p.background(0, 0, 0);
-                time += 0.01;
-
-                // Pick new target occasionally
-                if (p.frameCount % 120 === 0) {
-                    targetX = p.random(p.width * 0.2, p.width * 0.8);
-                    targetY = p.random(p.height * 0.2, p.height * 0.8);
-                    targetSize = p.random(baseSize * 0.75, baseSize * 1.75);
-                }
-
-                // Smooth movement toward target
-                circleX += (targetX - circleX) * 0.05;
-                circleY += (targetY - circleY) * 0.05;
-                circleSize += (targetSize - circleSize) * 0.04;
-
-                // Add gentle sway
-                let swayX = p.sin(time * 0.5) * 30;
-                let swayY = p.cos(time * 0.4) * 20;
-
-                // Draw faint circle
-                p.fill(255, 255, 255, 15);
-                p.noStroke();
-                p.ellipse(circleX + swayX, circleY + swayY, circleSize);
-
-                // Subtle blur/glow effect with multiple faint circles
-                p.fill(255, 255, 255, 5);
-                for (let i = 1; i <= 3; i++) {
-                    p.ellipse(
-                        circleX + swayX,
-                        circleY + swayY,
-                        circleSize + i * 20
-                    );
-                }
-            };
-
-            p.windowResized = function () {
-                if (document.getElementById('p5-container')) {
-                    let container = document.getElementById('p5-container');
-                    p.resizeCanvas(container.clientWidth, container.clientHeight);
-                }
-            };
-        };
-
-        new p5(sketch);
+                resizeCanvas(container.clientWidth, container.clientHeight);
+            }
+        }
     </script>
+    <script src="../p5.min.js"></script>
+    <script src="floating_circle.js"></script>
 </body>
 
 </html>

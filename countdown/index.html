@@ -100,10 +100,12 @@
         // Schedule Configuration
         // ====================================
         const SCHEDULE = [
-            { hour: 0, minute: 0, view: 'time' },
-            { hour: 1, minute: 0, view: 'time_quotes' }, // 必要に応じて追加
-            { hour: 2, minute: 0, view: 'countdown' },
+            { hour: 9, minute: 0, view: 'time' },
+            { hour: 10, minute: 0, view: 'time_quotes' },
+            { hour: 12, minute: 0, view: 'countdown' },
+            { hour: 12, minute: 30, view: 'time_quotes' },
             { hour: 13, minute: 0, view: 'time' },
+            { hour: 13, minute: 30, view: 'time_quotes' },
         ]
 
         // ====================================
