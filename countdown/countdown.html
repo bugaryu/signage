@@ -22,13 +22,6 @@
 
 <body>
     <script>
-        // テスト用設定：表示時間（分数）
-        // 例：displayMinutes = 1 なら1分間表示
-        const displayMinutes = 60;
-        
-        let startDisplayTime = null;
-        let lastRedirectTime = null;
-
         let targetDate;
         let bubbles = [];
         const themeColors = [
@@ -119,58 +112,32 @@
             const baseSize = min(width, height);
             const cx = width / 2;
 
-            // 初回訪問時に現在時刻を記録
-            if (startDisplayTime === null) {
-                startDisplayTime = now.getTime();
-            }
-
-            // displayMinutes分経ったらtime.htmlにリダイレクト
-            const elapsedSeconds = (now.getTime() - startDisplayTime) / 1000;
-            const totalSeconds = displayMinutes * 60;
-
-            if (elapsedSeconds >= totalSeconds && lastRedirectTime === null) {
-                lastRedirectTime = now.getTime();
-                window.location.href = 'time.html';
-                return;
-            }
-
-            // 
             fill(0, 140);
             rect(0, 0, width, height);
 
-            // 
             noStroke();
             fill(255);
             textSize(baseSize * 0.08);
             text(`${h}:${m}:${s}`, cx, baseSize * 0.16);
 
-            // 
             textSize(baseSize * 0.05);
             text(`${yyyy}/${MM}/${dd} ${dayName}`, cx, baseSize * 0.24);
 
-            // 
             textSize(baseSize * 0.05);
             text("MoN Takanawa:", cx, height / 2 - baseSize * 0.35);
             text("The Museum of Narratives", cx, height / 2 - baseSize * 0.29);
             text("開館まで", cx, height / 2 - baseSize * 0.20);
-            // text("Opening in", cx, height / 2 - baseSize * 0.04);
 
-            // 
             textSize(baseSize * 0.22);
             text(`${daysLeft}`, cx, height / 2);
 
-            // 
             textSize(baseSize * 0.08);
-            // text(`日`, cx + baseSize * 0.25, height / 2);
             text(`days`, cx + baseSize * 0.30, height / 2);
             
-            // 
             textSize(baseSize * 0.12);
             text(`${weeksLeft}`, cx, height / 2 + baseSize * 0.20);
 
-            // 
             textSize(baseSize * 0.06);
-            // text(`週`, cx + baseSize * 0.25, height / 2 + baseSize * 0.20);
             text(`weeks`, cx + baseSize * 0.30, height / 2 + baseSize * 0.20);
         }
     </script>

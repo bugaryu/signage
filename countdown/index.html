@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Museum Display Manager</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+            height: 100vh;
+            width: 100vw;
+            
+            /* font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif; */
+            font-family: "Noto Sans JP", sans-serif;
+            font-optical-sizing: auto;
+            /* font-weight: <weight>; */
+            font-style: normal;
+        }
+
+        #display-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 0;
+        }
+
+        #status-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #0f0;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 100;
+            font-family: 'Courier New', monospace;
+            min-width: 200px;
+            display: none;
+        }
+
+        #status-overlay.debug {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="display-frame"></iframe>
+    <div id="status-overlay">
+        <div>Current View: <span id="current-view">--</span></div>
+        <div>Time: <span id="current-time">--:--:--</span></div>
+        <div>Next Switch: <span id="next-switch">--:--</span></div>
+    </div>
+
+    <script>
+        // ====================================
+        // Schedule Configuration
+        // ====================================
+        const SCHEDULE = [
+            { hour: 0, minute: 0, view: 'time' },
+            { hour: 12, minute: 0, view: 'countdown' },
+            { hour: 13, minute: 0, view: 'time' },
+        ]
+
+        // ====================================
+        // Display Manager
+        // ====================================
+        class DisplayManager {
+            constructor() {
+                this.currentView = null;
+                this.lastCheckMinute = -1;
+                this.debugMode = false; // URLパラメータで ?debug=1 で有効化
+            }
+
+            init() {
+                this.debugMode = new URLSearchParams(window.location.search).has('debug');
+                
+                if (this.debugMode) {
+                    document.getElementById('status-overlay').classList.add('debug');
+                }
+                
+                console.log('[DisplayManager] Initialized', { debugMode: this.debugMode });
+                this.loadView();
+                this.startTimeMonitor();
+            }
+
+            loadView() {
+                const view = this.getCurrentView();
+                if (this.currentView === view) return;
+
+                this.currentView = view;
+                const viewFile = view === 'time' ? 'time.html' : 'countdown.html';
+                const frame = document.getElementById('display-frame');
+                
+                console.log(`[DisplayManager] Loading view: ${view} (${viewFile})`);
+                frame.src = viewFile;
+                
+                this.updateStatus();
+            }
+
+            getCurrentView() {
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+                let activeView = SCHEDULE[0].view;
+
+                for (let s of SCHEDULE) {
+                    const scheduleMinutes = s.hour * 60 + s.minute;
+                    if (currentMinutes >= scheduleMinutes) {
+                        activeView = s.view;
+                    }
+                }
+                return activeView;
+            }
+
+            getNextSwitchTime() {
+                const now = new Date();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                for (let s of SCHEDULE) {
+                    const scheduleMinutes = s.hour * 60 + s.minute;
+                    if (scheduleMinutes > currentMinutes) {
+                        return {
+                            hour: s.hour,
+                            minute: s.minute
+                        };
+                    }
+                }
+
+                // 次の日の最初のスケジュール
+                const nextSchedule = SCHEDULE[0];
+                return {
+                    hour: nextSchedule.hour,
+                    minute: nextSchedule.minute,
+                    nextDay: true
+                };
+            }
+
+            startTimeMonitor() {
+                setInterval(() => {
+                    const now = new Date();
+                    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                    if (this.lastCheckMinute !== currentMinutes) {
+                        this.lastCheckMinute = currentMinutes;
+                        this.loadView();
+                    }
+
+                    if (this.debugMode) {
+                        this.updateStatus();
+                    }
+                }, 1000);
+            }
+
+            updateStatus() {
+                const now = new Date();
+                const h = String(now.getHours()).padStart(2, '0');
+                const m = String(now.getMinutes()).padStart(2, '0');
+                const s = String(now.getSeconds()).padStart(2, '0');
+
+                document.getElementById('current-view').textContent = this.currentView;
+                document.getElementById('current-time').textContent = `${h}:${m}:${s}`;
+
+                const next = this.getNextSwitchTime();
+                const nextHour = String(next.hour).padStart(2, '0');
+                const nextMinute = String(next.minute).padStart(2, '0');
+                document.getElementById('next-switch').textContent = `${nextHour}:${nextMinute}${next.nextDay ? ' (明日)' : ''}`;
+            }
+        }
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            const manager = new DisplayManager();
+            manager.init();
+        });
+    </script>
+</body>
+</html>
