@@ -65,12 +65,6 @@
     </div>
 
     <script>
-        // テスト用設定：countdownに切り替える時刻
-        // const switchHour = 12;
-        // const switchMinute = 0;
-        
-        // let lastRedirectMinute = -1;
-
         function updateTime() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, "0");
@@ -87,15 +81,6 @@
 
             document.getElementById('time').textContent = `${h}:${m}:${s}`;
             document.getElementById('date').textContent = `${yyyy}/${MM}/${dd} ${dayName}`;
-
-            // switchHour:switchMinute になったらcountdown.htmlにリダイレクト
-            // const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            // const switchMinutes = switchHour * 60 + switchMinute;
-
-            // if (currentMinutes === switchMinutes && lastRedirectMinute !== switchMinutes) {
-            //     lastRedirectMinute = switchMinutes;
-            //     window.location.href = 'countdown.html';
-            // }
         }
 
         updateTime();
@@ -172,6 +157,8 @@
 
         new p5(sketch);
     </script>
+    <!-- <script src="quotes.js"></script> -->
+    <!-- <script src="time_sketch.js"></script> -->
 </body>
 
 </html>
