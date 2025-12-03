@@ -1,20 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="utf-8">
     <title>MoN Takanawa: The Museum of Narratives - Countdown</title>
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
-            background: #000;
-            /* font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif; */
-            /* font-family: "Noto Sans JP", sans-serif; */
+            padding: 0;
+            box-sizing: border-box;
+            /* デバッグ用 */
+            /* border: orangered 1px solid;  */
         }
 
-        canvas {
-            display: block;
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #e6e6e6;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #content {
+            position: fixed;
+            z-index: 10;
+            top: 8%;
+            text-align: center;
+        }
+
+        .museum-name {
+            font-size: 5vw;
+            margin-bottom: 1vw;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            letter-spacing: 2px;
+        }
+
+        .museum-subtitle {
+            font-size: 5vw;
+            margin-bottom: 1vw;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+            letter-spacing: 1px;
+        }
+
+        .label {
+            font-size: 4vw;
+            margin-bottom: 5vw;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+        }
+
+        .countdown-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10vw;
+            /* margin-bottom: 1vw; */
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .number {
+            font-size: 12vw;
+            font-weight: bold;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .unit {
+            font-size: 3vw;
+            margin-top: 2vw;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
         }
     </style>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script> -->
@@ -22,6 +84,22 @@
 </head>
 
 <body>
+    <div id="content">
+        <div class="museum-name">MoN Takanawa:</div>
+        <div class="museum-subtitle">The Museum of Narratives</div>
+        <div class="label">開館まで</div>
+        <div class="countdown-section">
+            <div class="countdown-item">
+                <div class="number" id="days">0</div>
+                <div class="unit">days</div>
+            </div>
+            <div class="countdown-item">
+                <div class="number" id="weeks">0</div>
+                <div class="unit">weeks</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let targetDate;
         let bubbles = [];
@@ -33,10 +111,8 @@
 
         function setup() {
             createCanvas(windowWidth, windowHeight);
+            updateCountdown();
             targetDate = new Date(2026, 2, 27, 0, 0, 0);
-
-            // drawingContext.shadowBlur = 0;
-            // drawingContext.shadowColor = 'black';
 
             const now = new Date();
             const diffMs = targetDate - now;
@@ -48,11 +124,9 @@
             for (let i = 0; i < daysLeft; i++) {
                 let colorChoice;
                 const rand = random(1);
-                if (rand < 0.90) {
-                    // 90%
+                if (rand < 0.90) { // 90%
                     colorChoice = random(themeColors);
-                } else {
-                    // 10%
+                } else { // 10%                    
                     const gray = random(100, 180);
                     colorChoice = [gray, gray, gray];
                 }
@@ -73,9 +147,12 @@
         function windowResized() {
             resizeCanvas(windowWidth, windowHeight);
         }
-
-        function drawBackground() {
+        
+        function draw() {            
+            background(0);
             noStroke();
+
+            // 描画と移動
             for (let b of bubbles) {
                 fill(b.color[0], b.color[1], b.color[2], b.alpha);
                 ellipse(b.x, b.y, b.r, b.r);
@@ -86,53 +163,26 @@
                 if (b.y < -b.r) b.y = height + b.r;
                 if (b.y > height + b.r) b.y = -b.r;
             }
+            
+            // 背景を半透明で上書きして残像効果
+            fill(0, 140);
+            rect(0, 0, width, height);
         }
 
-        function draw() {
-            drawingContext.shadowBlur = 0;
-            drawingContext.shadowColor = 'black';
-
-            background(0);
-            drawBackground();
-
+        function updateCountdown() {
+            const targetDate = new Date(2026, 2, 27, 0, 0, 0);
             const now = new Date();
             const diffMs = targetDate - now;
             const dayMs = 1000 * 60 * 60 * 24;
             let daysLeft = Math.ceil(diffMs / dayMs);
             if (daysLeft < 0) daysLeft = 0;
+
             const weeksLeft = (daysLeft / 7).toFixed(1);
-
-            const baseSize = min(width, height);
-            const cx = width / 2;
-
-            // 背景を半透明で上書きして残像効果
-            fill(0, 140);
-            rect(0, 0, width, height);
-
-            // noStroke();
-            fill(230);
-
-            // drawingContext.shadowOffsetX = 0;
-            // drawingContext.shadowOffsetY = 0;
-            drawingContext.shadowBlur = 50;
-            drawingContext.shadowColor = 'black';
-
-
-            textSize(baseSize * 0.05);
-            text("MoN Takanawa:", cx, baseSize * 0.15);
-            text("The Museum of Narratives", cx, baseSize * 0.22);
-            text("開館まで", cx, baseSize * 0.30);
-
-            textSize(baseSize * 0.12);
-            text(`${daysLeft}`, cx, baseSize * 0.45);
-
-            textSize(baseSize * 0.08);
-            text(`${weeksLeft}`, cx, baseSize * 0.58);
-
-            textSize(baseSize * 0.06);
-            text(`days`, cx + baseSize * 0.25, baseSize * 0.45);
-            text(`weeks`, cx + baseSize * 0.27, baseSize * 0.58);
+            console.log(daysLeft, weeksLeft);
+            document.getElementById('days').textContent = daysLeft;
+            document.getElementById('weeks').textContent = weeksLeft;
         }
+        setInterval(updateCountdown, 1000*60); // 1分ごとに更新
     </script>
 </body>
 
