@@ -4,83 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Museum Display Manager</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            overflow: hidden;
-            background: #000;
-            color: #fff;
-            height: 100vh;
-            width: 100vw;
-
-            /* font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans", sans-serif; */
-            font-family: "Noto Sans JP", sans-serif;
-            font-optical-sizing: auto;
-            /* font-weight: <weight>; */
-            font-style: normal;
-        }
-
-        #display-frame {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            z-index: 0;
-        }
-
-        #ui-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .time {
-            font-size: 15vw;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-        }
-
-        .date {
-            font-size: 6vw;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-        }
-
-        #status-overlay {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #0f0;
-            padding: 15px 20px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 100;
-            font-family: 'Courier New', monospace;
-            min-width: 200px;
-            display: none;
-        }
-
-        #status-overlay.debug {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -93,6 +17,7 @@
         <div>Current View: <span id="current-view">--</span></div>
         <div>Time: <span id="current-time">--:--:--</span></div>
         <div>Next Switch: <span id="next-switch">--:--</span></div>
+        <div>Canvas Size: <span id="canvas-size">-- x --</span></div>
     </div>
 
     <script>
@@ -101,11 +26,12 @@
         // ====================================
         const SCHEDULE = [
             { hour: 9, minute: 0, second: 0, view: 'time' },
-            { hour: 10, minute: 0, second: 0, view: 'time_quotes' },
-            { hour: 12, minute: 0, second: 0, view: 'countdown' },
-            { hour: 12, minute: 30, second: 0, view: 'time_quotes' },
-            { hour: 13, minute: 0, second: 0, view: 'time' },
-            { hour: 13, minute: 30, second: 0, view: 'time_quotes' },
+            // { hour: 10, minute: 0, second: 0, view: 'quotes' },
+            // { hour: 12, minute: 20, second: 0, view: 'countdown' },
+            // { hour: 12, minute: 40, second: 0, view: 'quotes' },
+            { hour: 12, minute: 55, second: 0, view: 'countdown' },
+            // { hour: 13, minute: 0, second: 0, view: 'time' },
+            // { hour: 13, minute: 30, second: 0, view: 'quotes' },
         ]
 
         // ====================================
@@ -140,8 +66,8 @@
                     viewFile = 'time.html';
                 } else if (view === 'countdown') {
                     viewFile = 'countdown.html';
-                } else if (view === 'time_quotes') {
-                    viewFile = 'time_quotes.html';
+                } else if (view === 'quotes') {
+                    viewFile = 'quotes.html';
                 } else {
                     viewFile = 'time.html'; // デフォルト
                 }
@@ -232,6 +158,10 @@
                 const nextMinute = String(next.minute).padStart(2, '0');
                 const nextSecond = String(next.second).padStart(2, '0');
                 document.getElementById('next-switch').textContent = `${nextHour}:${nextMinute}:${nextSecond}${next.nextDay ? ' (明日)' : ''}`;
+
+                // キャンバスサイズを表示
+                const canvasSize = `${window.innerWidth} x ${window.innerHeight}`;
+                document.getElementById('canvas-size').textContent = canvasSize;
             }
         }
 
