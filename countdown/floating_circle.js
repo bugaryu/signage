@@ -9,6 +9,7 @@ let circleTime = 0;
 let baseCircleSize;
 
 function initFloatingCircle() {
+  frameRate(30);
   baseCircleSize = Math.min(width, height) * 0.3;
   circleX = width / 2;
   circleY = height / 2;
@@ -39,18 +40,15 @@ function drawFloatingCircle() {
   let swayX = sin(circleTime * 0.5) * 30;
   let swayY = cos(circleTime * 0.4) * 20;
 
-  // Draw faint circle
-  fill(255, 255, 255, 25);
+  // Draw optimized glow with fewer circles
   noStroke();
+  fill(255, 255, 255, 12);
+  ellipse(circleX + swayX, circleY + swayY, circleSize * 1.25);
+  
+  fill(255, 255, 255, 18);
+  ellipse(circleX + swayX, circleY + swayY, circleSize * 1.1);
+  
+  // Draw main circle
+  fill(255, 255, 255, 25);
   ellipse(circleX + swayX, circleY + swayY, circleSize);
-
-  // Subtle blur/glow effect with multiple faint circles
-  fill(255, 255, 255, 10);
-  for (let i = 1; i <= 3; i++) {
-    ellipse(
-      circleX + swayX,
-      circleY + swayY,
-      circleSize + i * 20
-    );
-  }
 }
