@@ -8,7 +8,7 @@ const fadeDuration = quoteDisplayDuration; // フェードイン/アウト時間
 let textBaseSize = 0; // 基本テキストサイズ
 
 // const DEBUG = new URLSearchParams(window.parent.location.search).has('debug');
-const DEBUG = false
+const DEBUG = true
 console.log('Debug mode:', DEBUG);
 
 function pickTodayQuote() {
@@ -44,7 +44,6 @@ function pickTodayQuote() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    frameRate(30); // 30FPSに制限（スムーズ表示で十分、CPU負荷軽減）
     textFont("Noto Sans JP");
     textAlign(CENTER, CENTER);
     textWrap(CHAR); // テキスト折り返しを有効化
@@ -113,23 +112,23 @@ function draw() {
         const lineHeight = textBaseSize * 1.5; // 行間
         const authorSize = textBaseSize * 0.75;
         const authorSpacing = textBaseSize * 0.8; // 著者と名言の間隔
-        
+
         // 最大ボックスの高さを計算（キャンバスの50%を上限）
         const maxBoxHeight = height * 0.45;
         const quoteBoxWidth = width - padding * 2;
-        
+
         // テキストサイズ設定
         textSize(textBaseSize);
         textLeading(lineHeight);
-        
+
         // 名言のテキスト高さを推定
         const estimatedQuoteHeight = textBaseSize * 3.5; // 見積もり高さ
         const estimatedAuthorHeight = authorSize * 1.5;
         const totalEstimatedHeight = estimatedQuoteHeight + authorSpacing + estimatedAuthorHeight;
-        
+
         // ボックスの実際の高さを決定（最大値を超えない）
         const boxHeight = min(totalEstimatedHeight + textBaseSize, maxBoxHeight);
-        
+
         // 垂直中央配置用のY位置計算
         const quoteBoxY = height * 0.25;
         const contentTopY = quoteBoxY - boxHeight * 0.35;
@@ -162,7 +161,7 @@ function draw() {
             stroke(100, 255, 100, 200); // 常時表示
             noFill();
             rect(padding, contentTopY, quoteBoxWidth, boxHeight);
-            
+
             // テキスト情報を表示（常に表示、フェードしない）
             fill(100, 255, 100, 255); // 常時表示
             // noFill();
@@ -172,9 +171,8 @@ function draw() {
             textSize(textBaseSize * 0.5);
             textLeading(textBaseSize * 1.2);
             text(`Quote: "${todayQuote.text.substring(0, 20)}..."`, textBaseSize * 0.5, textBaseSize);
-            text(`Author: ${todayQuote.author}`, textBaseSize * 0.5, textBaseSize * 1.6);
-            text(`Canvas: ${width}x${height}`, textBaseSize * 0.5, textBaseSize * 2.2);
-            text(`Alpha: ${Math.round(quoteAlpha)}`, textBaseSize * 0.5, textBaseSize * 2.8);
+            text(`Author: ${todayQuote.author}`, textBaseSize * 0.5, textBaseSize * 1.8);
+            text(`Alpha: ${Math.round(quoteAlpha)}`, textBaseSize * 0.5, textBaseSize * 2.6);
             text(`Elapsed: ${Math.round((millis() - lastQuoteTime) / 100) / 10}s`, textBaseSize * 0.5, textBaseSize * 3.4);
             textAlign(CENTER);
         }
@@ -187,4 +185,9 @@ function draw() {
             text("Quote not loaded", width / 2, height / 2);
         }
     }
+}
+
+function windowResized() {
+    console.log('Window resized:', windowWidth, windowHeight);
+    resizeCanvas(windowWidth, windowHeight);
 }

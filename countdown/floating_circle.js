@@ -9,7 +9,7 @@ let circleTime = 0;
 let baseCircleSize;
 
 function initFloatingCircle() {
-  frameRate(30);
+  frameRate(24);
   baseCircleSize = Math.min(width, height) * 0.3;
   circleX = width / 2;
   circleY = height / 2;
