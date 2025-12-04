@@ -1,0 +1,10 @@
+# ~/.config/lxsession/LXDE/autostart
+@lxpanel --profile LXDE
+@pcmanfm --desktop --profile LXDE
+@xscreensaver -no-splash
+
+@xrandr --output HDMI-1 --rotate right
+
+@sleep 5
+@lxterminal
+@$HOME/workspace/signage/countdown/kiosk.sh
