@@ -1,10 +1,11 @@
 # ~/.config/lxsession/LXDE/autostart
 @lxpanel --profile LXDE
-@pcmanfm --desktop --profile LXDE
+#@pcmanfm --desktop --profile LXDE
 @xscreensaver -no-splash
 
 @xrandr --output HDMI-1 --rotate right
 
-@sleep 5
+@sleep 3
 @lxterminal
-@$HOME/workspace/signage/countdown/kiosk.sh
+@sleep 5
+@/home/dietpi/workspace/signage/kiosk.sh
