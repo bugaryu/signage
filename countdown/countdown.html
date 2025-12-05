@@ -125,7 +125,9 @@
             const dayMs = 1000 * 60 * 60 * 24;
             let daysLeft = Math.ceil(diffMs / dayMs);
             if (daysLeft < 0) daysLeft = 0;
-
+  
+            baseCircleSize = Math.min(width, height) * 0.6;
+            let velocity = 0.5;
             // 
             for (let i = 0; i < daysLeft; i++) {
                 let colorChoice;
@@ -140,9 +142,9 @@
                 bubbles.push({
                     x: random(width),
                     y: random(height),
-                    r: random(30, 300),
-                    vx: random(-0.5, 0.5),
-                    vy: random(-0.5, 0.5),
+                    r: random(baseCircleSize * 0.1, baseCircleSize),
+                    vx: random(-velocity, velocity),
+                    vy: random(-velocity, velocity),
                     alpha: random(100, 250),
                     color: colorChoice
                 });
