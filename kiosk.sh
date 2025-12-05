@@ -1,3 +1,4 @@
+#!/bin/bash
 chromium \
   --kiosk \
   --noerrdialogs \

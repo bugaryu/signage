@@ -71,6 +71,9 @@
                 } else {
                     viewFile = 'time.html'; // デフォルト
                 }
+                if (this.debugMode) {
+                    viewFile += '?debug=1';
+                }
 
                 const frame = document.getElementById('display-frame');
 
