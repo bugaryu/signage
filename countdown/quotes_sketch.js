@@ -3,12 +3,12 @@ let todayQuote = null;
 let quoteAlpha = 0; // 名言の透明度
 let fadingIn = true; // フェードイン中か
 let lastQuoteTime = 0; // 最後に名言が表示された時刻
-const quoteDisplayDuration = 30000; // 表示時間（ミリ秒）：10秒
+const quoteDisplayDuration = 30000; // 表示時間（ミリ秒）：30秒
 const fadeDuration = quoteDisplayDuration; // フェードイン/アウト時間（ミリ秒）
 let textBaseSize = 0; // 基本テキストサイズ
 
-// const DEBUG = false;
-const DEBUG = new URLSearchParams(window.location.search).has('debug');
+const DEBUG = false;
+// const DEBUG = new URLSearchParams(window.location.search).has('debug');
 console.log('[Quotes Sketch] Debug mode:', DEBUG);
 
 function pickTodayQuote() {
