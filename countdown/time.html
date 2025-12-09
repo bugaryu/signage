@@ -5,9 +5,13 @@
     <meta charset="utf-8">
     <title>Time Display</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap');
+
         * {
             margin: 0;
             padding: 0;
+            /* デバッグ用 */
+            /* border: solid 1px green; */
         }
 
         body {
@@ -27,21 +31,92 @@
             height: 100%;
             z-index: 0;
         }
+
+        #time-message {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+            font-size: 6.5vw;
+            font-weight: bold;
+            /* text-shadow: 0 0 20px rgba(0, 0, 0, 0.8); */
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+
+            font-family: 'Noto Sans JP', sans-serif;
+            /* background: linear-gradient(90deg, #FF0000, #6AD074, #001CB0); */
+            background: linear-gradient(100deg, #FF0000 33%, #6AD074 35%, #6AD074 58%, #001CB0 60%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #time-message.show {
+            opacity: 1;
+        }
     </style>
 </head>
 
 <body>
     <div id="p5-container"></div>
+    <div id="time-message"></div>
     <script>
+        let lastHour = -1; // 前回表示した時間帯を記録
+
+        // 時間帯に応じたメッセージを取得
+        function getTimeMessage() {
+            const now = new Date();
+            const hour = now.getHours();
+
+            if (hour >= 9 && hour < 10) {
+                // if (hour >= 21) {
+                return 'おはようございます。\n今日も一日がんばりましょう!';
+            } else if (hour >= 18) {
+                return 'お疲れ様です。\nそろそろ帰りましょう。';
+            }
+            return null; // 営業時間外
+        }
+
+        // メッセージを表示
+        function showMessage() {
+            const now = new Date();
+            const currentHour = now.getHours();
+
+            // 時間帯が変わった場合のみメッセージを表示
+            // if (lastHour !== currentHour) {
+            //     lastHour = currentHour;
+            const message = getTimeMessage();
+            const messageEl = document.getElementById('time-message')
+            console.log('Displaying message:', message);
+            // if (message) {
+            messageEl.innerText = message;
+            messageEl.classList.add('show');
+
+            // 3秒後にフェードアウト
+            // setTimeout(() => {
+            //     messageEl.classList.remove('show');
+            // }, 3000);
+            // }
+            // }
+        }
+
         // p5.js グローバルモードでのセットアップ
         function setup() {
             let container = document.getElementById('p5-container');
             let w = container.clientWidth;
             let h = container.clientHeight;
             createCanvas(w, h);
+            frameRate(30); // 30FPSに制限
 
             // フローティングサークルの初期化
             initFloatingCircle();
+
+            // 初回メッセージ表示
+            showMessage();
         }
 
         function draw() {
@@ -50,6 +125,9 @@
             // フローティングサークルの更新と描画
             updateFloatingCircle();
             drawFloatingCircle();
+
+            // 毎フレーム時間帯をチェック
+            // showMessage();
         }
 
         function windowResized() {

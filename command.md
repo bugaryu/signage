@@ -25,3 +25,15 @@ chromium \
 
 # シャットダウン
 shutdown -h 18:00
+
+# 自動実行
+sudo crontab -e
+
+## 21:00 に Chromium を強制終了
+00 20 * * * pkill chromium
+00 20 * * * pkill lxterminal
+01 20 * * * echo "kill executed..."
+
+## 9:00 に kiosk を再起動（Chromium起動スクリプトを実行）
+#0 9 * * * /home/dietpi/workspace/signage/kiosk.sh
+55 08 * * * sudo reboot
