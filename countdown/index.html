@@ -28,8 +28,9 @@
             { hour: 9, minute: 0, second: 0, view: 'time' },
             { hour: 10, minute: 0, second: 0, view: 'quotes' },
             { hour: 12, minute: 0, second: 0, view: 'countdown' },
-            { hour: 12, minute: 30, second: 0, view: 'quotes' },
-            { hour: 12, minute: 40, second: 0, view: 'countdown' },
+            { hour: 12, minute: 15, second: 0, view: 'slide' },
+            { hour: 12, minute: 30, second: 0, view: 'countdown' },
+            { hour: 12, minute: 45, second: 0, view: 'slide' },
             { hour: 13, minute: 0, second: 0, view: 'quotes' },
             { hour: 18, minute: 0, second: 0, view: 'time' },
         ]
@@ -68,6 +69,8 @@
                     viewFile = 'countdown.html';
                 } else if (view === 'quotes') {
                     viewFile = 'quotes.html';
+                } else if (view === 'slide') {
+                    viewFile = '../imageslide/imageslide.html';
                 } else {
                     viewFile = 'time.html'; // デフォルト
                 }
