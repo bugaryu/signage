@@ -14,10 +14,58 @@ let slideStart = 0;      // 現在のスライドが始まった時間
 let transitionStart = 0;    // フェードが始まった時間
 let inTransition = false;
 
+let loadedFlags = [];   // 各画像のロード状態
+let loadedCount = 0;
+
 function preload() {
     console.log("imageUrls.length: " + imageUrls.length);
-    for (let url of imageUrls) {
-        images.push(loadImage(url));
+    for (let i = 0; i < imageUrls.length; i++) {
+        loadedFlags[i] = false;
+        images[i] = null;
+    }
+    // ★ 最初の1枚だけ確実に読み込む（開始時に黒画面にならないように）
+    images[0] = loadImage(
+        imageUrls[0], (img) => {
+            images[0] = img;
+            loadedFlags[0] = true;
+            loadedCount++;
+            console.log("loaded", 0, imageUrls[0]);
+        },
+        (err) => {
+            console.error("failed to load", imageUrls[0], err);
+            loadedFlags[0] = false;
+        }
+    );
+    console.log("started loading 0 " + imageUrls[0]);
+    // for (let url of imageUrls) {
+    //     images.push(loadImage(url));
+    // }
+}
+
+function loadAnotherImage() {
+    // console.log("loadImage called, loadedCount: " + loadedCount);
+    for (let i = 1; i < imageUrls.length; i++) {
+        // すでに読み込み開始してたらスキップ
+        if (images[i]) {
+            // console.log("already loading", i, imageUrls[i]);
+            continue
+        }
+
+        loadImage(
+            imageUrls[i],
+            (img) => {
+                images[i] = img;
+                loadedFlags[i] = true;
+                loadedCount++;
+                console.log("loaded", i, imageUrls[i]);
+            },
+            (err) => {
+                console.error("failed to load", imageUrls[i], err);
+                loadedFlags[i] = false;
+            }
+        );
+        // console.log("started loading", i, imageUrls[i]);
+        break; // 1回に1枚だけ読み込む
     }
 }
 
@@ -79,7 +127,7 @@ function setup() {
     textAlign(CENTER, CENTER);
     textWrap(CHAR); // テキスト折り返しを有効化
     textBaseSize = width * 0.04; // 基本テキストサイズ
-    frameRate(30);
+    frameRate(5);
 
     // textSize(64);
     // fill(255);
@@ -98,6 +146,8 @@ function setup() {
     quoteAlpha = 0;
     slideAlpha = 0;
     fadingIn = true;
+
+    // preload();
 }
 
 function updateQuoteAlpha() {
@@ -135,7 +185,22 @@ function updateQuoteAlpha() {
 function draw() {
     background(0);
 
+    if (loadedCount === 0) {
+        // 何も読み込めてない間の一時画面
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(24);
+        text("Loading photos...", width / 2, height / 2);
+        return;
+    }
+
     let now = millis();
+
+    // 今の currentIndex がまだ読み込まれてなかったら、
+    // 一番最初に読み込めているインデックスに飛ぶ
+    if (!images[currentIndex]) {
+        currentIndex = findFirstLoadedIndex();
+    }
 
     // スライド切替判定
     if (!inTransition && now - slideStart > slideDuration) {
@@ -171,6 +236,9 @@ function draw() {
 
     // 上部テキスト（時間帯でメッセージ変更）
     drawTimeBasedMessage();
+
+    // ★ 残りの画像を裏で読み込む
+    loadAnotherImage();
 }
 
 // ================================
