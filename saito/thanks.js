@@ -24,8 +24,10 @@ let thanksText = null;
 let quoteAlpha = 0; // 名言の透明度
 let fadingIn = true;
 let lastQuoteTime = 0;
-const quoteDisplayDuration = 30000; // 30秒
+const quoteDisplayDuration = 20000; // 30秒
 const quoteFadeDuration = 2000;
+const quoteGapDuration = 5000;  // ★ テキスト非表示の時間（ms）
+
 let textBaseSize = 0;
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
@@ -143,11 +145,16 @@ function pickText() {
 function updateQuoteAlpha() {
     const elapsedTime = millis() - lastQuoteTime;
 
-    if (elapsedTime < quoteFadeDuration && fadingIn) {
-        // フェードイン
+    // ① フェードイン（0 → quoteFadeDuration）
+    if (elapsedTime < quoteFadeDuration) {
         quoteAlpha = map(elapsedTime, 0, quoteFadeDuration, 0, 255);
-    } else if (elapsedTime > quoteDisplayDuration - quoteFadeDuration) {
-        // フェードアウト
+    }
+    // ② フル表示（quoteFadeDuration → quoteDisplayDuration - quoteFadeDuration）
+    else if (elapsedTime < quoteDisplayDuration - quoteFadeDuration) {
+        quoteAlpha = 255;
+    }
+    // ③ フェードアウト（quoteDisplayDuration - quoteFadeDuration → quoteDisplayDuration）
+    else if (elapsedTime < quoteDisplayDuration) {
         const fadeOutProgress = map(
             elapsedTime,
             quoteDisplayDuration - quoteFadeDuration,
@@ -156,13 +163,14 @@ function updateQuoteAlpha() {
             0
         );
         quoteAlpha = fadeOutProgress;
-    } else {
-        // フル表示
-        quoteAlpha = 255;
     }
-
-    // 表示時間を超えたら次のテキストへ
-    if (elapsedTime > quoteDisplayDuration) {
+    // ④ ギャップ期間（quoteDisplayDuration → quoteDisplayDuration + quoteGapDuration）
+    else if (elapsedTime < quoteDisplayDuration + quoteGapDuration) {
+        // ★ ここではテキスト完全非表示
+        quoteAlpha = 0;
+    }
+    // ⑤ 次のテキストへ
+    else {
         pickText();
         lastQuoteTime = millis();
         quoteAlpha = 0;
@@ -176,6 +184,7 @@ function updateQuoteAlpha() {
 function setup() {
     console.log(windowWidth, windowHeight);
     createCanvas(windowWidth, windowHeight);
+
     imageMode(CENTER);
     textAlign(CENTER, CENTER);
     textWrap(CHAR);
@@ -267,13 +276,13 @@ function draw() {
     }
 
     // ===== テキスト用背景オーバーレイ（視認性アップ）=====
-    // if (quoteAlpha > 0) {
-    //     push();
-    //     noStroke();
-    //     fill(0, map(quoteAlpha, 0, 255, 0, 180));
-    //     rect(0, 0, width, height);
-    //     pop();
-    // }
+    if (quoteAlpha > 0) {
+        push();
+        noStroke();
+        fill(0, map(quoteAlpha, 0, 255, 0, 100));
+        rect(0, 0, width, height);
+        pop();
+    }
 
     // テキスト描画
     drawTimeBasedMessage();
@@ -369,6 +378,28 @@ function drawTimeBasedMessage() {
 
     textSize(authorSize);
     text("— " + thanksText.author, width / 2, contentTopY + boxHeight * 0.75);
+
+
+    // デバッグ表示：背景のボックスを描画（常に表示、フェードしない）
+    if (DEBUG) {
+        stroke(100, 255, 100, 200); // 常時表示
+        noFill();
+        rect(padding, contentTopY, quoteBoxWidth, boxHeight);
+
+        // テキスト情報を表示（常に表示、フェードしない）
+        fill(100, 255, 100, 255); // 常時表示
+        // noFill();
+        // fill(100, 255, 100, 255);
+        // textFont('Courier New', 'monospace');
+        textAlign(LEFT);
+        textSize(textBaseSize * 0.5);
+        textLeading(textBaseSize * 1.2);
+        text(`Quote: "${thanksText.text.substring(0, 20)}..."`, textBaseSize * 0.5, textBaseSize);
+        text(`Author: ${thanksText.author}`, textBaseSize * 0.5, textBaseSize * 1.8);
+        text(`Alpha: ${Math.round(quoteAlpha)}`, textBaseSize * 0.5, textBaseSize * 2.6);
+        text(`Elapsed: ${Math.round((millis() - lastQuoteTime) / 100) / 10}s`, textBaseSize * 0.5, textBaseSize * 3.4);
+        textAlign(CENTER);
+    }
 }
 
 function windowResized() {

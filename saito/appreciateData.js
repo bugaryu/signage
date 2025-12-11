@@ -7,7 +7,8 @@ const appreciatesData = [
   // { text: "これからのご活躍をお祈りしております！", author: "MoN Takanawa 一同" },
   // { text: "ありがとうございました！新天地でもご活躍を！", author: "MoN Takanawa 一同" },
   { text: "これはtest１です", author: "mon１" },
-  { text: "これはtest２です", author: "mon２" },
+  // { text: "これはtest２です。長い文章を表示したら\nどのように表示されるか検証します。", author: "mon２" },
+  { text: "これはtest３です。長い文章を表示したらどのように表示されるか検証します。", author: "mon３" },
   // { text: "", author: "" },
   // { text: "", author: "" },
 ];
