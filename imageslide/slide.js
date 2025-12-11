@@ -113,9 +113,9 @@ function findFirstLoadedIndex() {
 // 名言まわり
 // ================================
 function pickText() {
-    if (typeof appreciatesData === "undefined") {
+    if (typeof messageData === "undefined") {
         console.error(
-            "appreciatesData is not loaded. Make sure appreciates.js is included before thanks.js"
+            "messageData is not loaded. Make sure messages.js is included before slide.js"
         );
         thanksText = {
             text: "引用句が読み込まれていません",
@@ -130,18 +130,18 @@ function pickText() {
     const d = now.getDate();
 
     // 完全ランダム選択（「毎回変わる」でOKそうだったのでこちら）
-    const seed = random(appreciatesData.length);
+    const seed = random(messageData.length);
     const index = int(seed);
-    console.log("appreciate index:", index, seed);
+    console.log("text index:", index, seed);
 
-    thanksText = appreciatesData[index];
+    thanksText = messageData[index];
 
     if (DEBUG) {
         console.log("[Quote Debug]", {
             date: `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`,
             seed: seed,
             quoteIndex: index,
-            totalQuotes: appreciatesData.length,
+            totalQuotes: messageData.length,
             selectedQuote: thanksText,
         });
     }
@@ -193,7 +193,6 @@ function setup() {
     imageMode(CENTER);
     textAlign(CENTER, CENTER);
     textWrap(CHAR);
-    // textFont("Noto Sans JP", "Noto Color Emoji");
     textFont(font);
     textBaseSize = width * 0.04;
     frameRate(30); // 描画は30fps, 負荷が高ければ下げてもOK
@@ -281,17 +280,8 @@ function draw() {
         }
     }
 
-    // ===== テキスト用背景オーバーレイ（視認性アップ）=====
-    if (quoteAlpha > 0) {
-        push();
-        noStroke();
-        fill(0, map(quoteAlpha, 0, 255, 0, 100));
-        rect(0, 0, width, height);
-        pop();
-    }
-
     // テキスト描画
-    drawTimeBasedMessage();
+    // drawTimeBasedMessage();
 }
 
 // ================================
@@ -329,6 +319,15 @@ function drawKenBurns(img, progress, alpha) {
 // 名言描画
 // ================================
 function drawTimeBasedMessage() {
+    // ===== テキスト用背景オーバーレイ（視認性アップ）=====
+    if (quoteAlpha > 0) {
+        push();
+        noStroke();
+        fill(0, map(quoteAlpha, 0, 255, 0, 100));
+        rect(0, 0, width, height);
+        pop();
+    }
+
     updateQuoteAlpha();
 
     if (!thanksText) {
